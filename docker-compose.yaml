@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  monitoring-gas-sensor:
+    container_name: mq2_exporter
+    build: .
+    restart: always
+    ports:
+      - 9595:9595
+    env_file:
+      - .env
