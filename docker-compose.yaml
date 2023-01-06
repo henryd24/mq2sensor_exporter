@@ -6,8 +6,5 @@ services:
     restart: always
     ports:
       - 9595:9595
-    environment:
-      - TOPIC=''
-      - MQTTHOST==''
-      - MQTTUSER==''
-      - MQTTPASS==''
+    env_file:
+      - .env
