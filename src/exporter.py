@@ -67,4 +67,4 @@ if __name__ == '__main__':
     PORT = os.getenv('GAS_PORT', 9595)
     logging.info("Starting MQ2-Gas-Exporter on http://localhost:" +
                  str(PORT))
-    serve(app, host='0.0.0.0', port=PORT)
+    serve(app, host='0.0.0.0', port=PORT,channel_timeout=10,cleanup_interval=20,connection_limit=2)
