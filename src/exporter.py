@@ -22,6 +22,7 @@ log.disabled = True
 
 # Create Metrics
 server = Gauge('gas_sensor_server_id', 'MQ2 server ID used to measure')
+
 co = Gauge('gas_sensor_co_ppm',
                'MQ2 current co in ppm')
 lpg = Gauge('gas_sensor_lpg_ppm',
@@ -33,9 +34,12 @@ propane = Gauge('gas_sensor_propane_ppm',
 smoke = Gauge('gas_sensor_smoke_ppm', 'MQ2 current co in ppm')
 
 def get_data():
-    msg = suscribe.simple(topic,hostname=hostname,auth=auth)
-    msg_dict=json.loads(msg.payload.decode())
-    return "1",msg_dict["CO"],msg_dict["LPG"],msg_dict["CH4"],msg_dict["Smoke"],msg_dict["CO"]
+    try:
+        msg = suscribe.simple(topic,hostname=hostname,auth=auth,keepalive=10)
+        msg_dict=json.loads(msg.payload.decode())
+        return msg_dict["ID"],msg_dict["CO"],msg_dict["LPG"],msg_dict["CH4"],msg_dict["Smoke"],msg_dict["CO"]
+    except:
+        return 0,0,0,0,0,0
 
 @app.route("/metrics")
 def updateResults():
@@ -49,7 +53,7 @@ def updateResults():
     logging.info("Server=" + str(r_server) + " CO=" + str(r_co) +
                     "ppm" + " LPG=" + str(r_lpg) + "ppm" + " CH4=" +
                     str(r_ch4) + "ppm" + " Propane=" +
-                    str(r_propane) +"ppm" + "Smoke=" + str(r_smoke)+"ppm")
+                    str(r_propane) +"ppm" + " Smoke=" + str(r_smoke)+"ppm")
     return make_wsgi_app()
 
 
